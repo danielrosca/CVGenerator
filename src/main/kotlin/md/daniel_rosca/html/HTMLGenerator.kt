@@ -120,10 +120,9 @@ fun generateHtml(cv: CvData): String {
                 cv.experience.zip(jobDurations).forEach { (job, duration) ->
                     div("job") {
                         div("job-header") {
-                            h3 {
-                                +"${job.title} (${duration})"
-                                span("company") { +" at ${job.company}" }
-                            }
+                            h3 { +"${job.title} (${duration})" }
+                            span("company") { +" at ${job.company}" }
+                            br {}
                             span("dates") {
                                 +"${job.startDate.formatToLongDate()} – "
                                 if (job.endDate == null) {
