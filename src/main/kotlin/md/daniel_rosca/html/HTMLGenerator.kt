@@ -52,7 +52,7 @@ private fun sumDurations(durations: List<Duration>): Duration {
 
 fun generateHtml(cv: CvData): String {
     // Calculate durations for each job
-    val jobDurations = cv.experience.map { calculateDuration(it.startDate, it.endDate) }
+    val jobDurations = cv.experience.map { calculateDuration(it.startDate, it.endDate ?: Date()) }
     val totalDuration = sumDurations(jobDurations)
 
     return createHTML(xhtmlCompatible = true).html {
@@ -125,7 +125,12 @@ fun generateHtml(cv: CvData): String {
                                 span("company") { +" at ${job.company}" }
                             }
                             span("dates") {
-                                +"${job.startDate.formatToLongDate()} – ${job.endDate.formatToLongDate()}"
+                                +"${job.startDate.formatToLongDate()} – "
+                                if (job.endDate == null) {
+                                    +"Present"
+                                } else {
+                                    +job.endDate.formatToLongDate()
+                                }
                             }
                         }
                         ul {

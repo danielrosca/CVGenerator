@@ -46,7 +46,7 @@ data class JobExperience(
     val startDate: Date,
     @JsonProperty("endDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    val endDate: Date,
+    val endDate: Date?,
     val bullets: List<String>
 )
 

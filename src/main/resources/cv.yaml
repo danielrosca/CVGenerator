@@ -21,7 +21,6 @@ experience:
     company: "Adobe Workfront"
     location: "Remote"
     startDate: "2020-01-01"
-    endDate: "2023-11-01"
     bullets:
       - "Engineered a critical reporting feature by building a new Java microservice (consuming from Kafka, processing in PostgreSQL) and a React microfrontend, resulting in a 30% faster data visualization."
       - "Led the development of three core React microfrontends, decoupling the frontend architecture and improving page load times by 40%."
