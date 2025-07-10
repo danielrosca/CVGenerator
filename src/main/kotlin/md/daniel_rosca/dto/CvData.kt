@@ -1,3 +1,5 @@
+package md.daniel_rosca.dto
+
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 

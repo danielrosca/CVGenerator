@@ -1,5 +1,8 @@
+package md.daniel_rosca.html
+
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
+import md.daniel_rosca.dto.CvData
 
 fun generateHtml(cv: CvData): String {
     return createHTML(xhtmlCompatible = true).html {

@@ -1,6 +1,11 @@
+package md.daniel_rosca
+
+import md.daniel_rosca.dto.CvData
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import md.daniel_rosca.html.generateHtml
+import md.daniel_rosca.pdf.generatePdf
 import java.io.File
 
 fun main() {

@@ -1,3 +1,5 @@
+package md.daniel_rosca.pdf
+
 import org.xhtmlrenderer.pdf.ITextRenderer
 import java.io.File
 import java.io.FileOutputStream
