@@ -20,7 +20,8 @@ experience:
   - title: "Senior Full-Stack Developer / Consultant"
     company: "Adobe Workfront"
     location: "Remote"
-    dates: "2020 – Present"
+    startDate: "2020-01-01"
+    endDate: "2023-11-01"
     bullets:
       - "Engineered a critical reporting feature by building a new Java microservice (consuming from Kafka, processing in PostgreSQL) and a React microfrontend, resulting in a 30% faster data visualization."
       - "Led the development of three core React microfrontends, decoupling the frontend architecture and improving page load times by 40%."
@@ -31,7 +32,8 @@ experience:
   - title: "Senior Java Developer"
     company: "E-Commerce Solutions Inc."
     location: "Munich, Germany"
-    dates: "2017 – 2020"
+    startDate: "2017-06-01"
+    endDate: "2019-12-31"
     bullets:
       - "Developed core backend services using Java and Spring Boot, processing over 100,000 transactions per day."
       - "Designed and implemented RESTful APIs to support new mobile and web client functionalities."
@@ -41,4 +43,5 @@ education:
   - degree: "Bachelor of Science in Computer Science"
     institution: "Technical University of Munich"
     location: "Munich, Germany"
-    graduationYear: "2017"
+    startDate: "2013-10-01"
+    graduationYear: "2017-07-01"

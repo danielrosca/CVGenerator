@@ -3,14 +3,63 @@ package md.daniel_rosca.html
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import md.daniel_rosca.dto.CvData
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
+import java.util.*
+import java.text.SimpleDateFormat
+
+private fun Date.toLocalDate(): LocalDate = this.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+
+private fun Date.formatToLongDate(): String {
+    val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
+    return sdf.format(this)
+}
+
+private data class Duration(val years: Long, val months: Long) {
+    override fun toString(): String {
+        val y = if (years > 0) "$years year${if (years > 1) "s" else ""}" else ""
+        val m = if (months > 0) "$months month${if (months > 1) "s" else ""}" else ""
+        return when {
+            years > 0 && months > 0 -> "$y $m"
+            years > 0 -> y
+            months > 0 -> m
+            else -> "1 month"
+        }
+    }
+}
+
+private fun calculateDuration(start: Date, end: Date): Duration {
+    val startDate = start.toLocalDate()
+    val endDate = end.toLocalDate()
+    var months = ChronoUnit.MONTHS.between(startDate, endDate)
+    val days = ChronoUnit.DAYS.between(startDate.plusMonths(months), endDate)
+    // If there are leftover days, round up to next month
+    if (days > 0) months += 1
+    if (months < 1) months = 1 // Always at least 1 month
+    val years = months / 12
+    val remMonths = months % 12
+    return Duration(years, remMonths)
+}
+
+private fun sumDurations(durations: List<Duration>): Duration {
+    var totalMonths = durations.sumOf { it.years * 12 + it.months }
+    if (totalMonths < 1) totalMonths = 1
+    val years = totalMonths / 12
+    val months = totalMonths % 12
+    return Duration(years, months)
+}
 
 fun generateHtml(cv: CvData): String {
+    // Calculate durations for each job
+    val jobDurations = cv.experience.map { calculateDuration(it.startDate, it.endDate) }
+    val totalDuration = sumDurations(jobDurations)
+
     return createHTML(xhtmlCompatible = true).html {
         head {
             meta(charset = "UTF-8")
             title("${cv.personalInfo.name} - CV")
             style {
-                // Professional and clean CSS for the CV
                 unsafe {
                     +"""
                         body { 
@@ -67,36 +116,17 @@ fun generateHtml(cv: CvData): String {
             }
 
             div("section") {
-                h2 { +"Technical Skills" }
-                div("skills-grid") {
-                    strong { +"Backend:" }
-                    span { +cv.technicalSkills.backend }
-                    br {}
-                    strong { +"Frontend:" }
-                    span { +cv.technicalSkills.frontend }
-                    br {}
-                    strong { +"Databases:" }
-                    span { +cv.technicalSkills.databases }
-                    br {}
-                    strong { +"DevOps & Cloud:" }
-                    span { +cv.technicalSkills.devopsAndCloud }
-                    br {}
-                    strong { +"Tools & Methods:" }
-                    span { +cv.technicalSkills.toolsAndMethodologies }
-                    br {}
-                }
-            }
-
-            div("section") {
-                h2 { +"Professional Experience" }
-                cv.experience.forEach { job ->
+                h2 { +"Professional Experience (${totalDuration})" }
+                cv.experience.zip(jobDurations).forEach { (job, duration) ->
                     div("job") {
                         div("job-header") {
                             h3 {
-                                +job.title
+                                +"${job.title} (${duration})"
                                 span("company") { +" at ${job.company}" }
                             }
-                            span("dates") { +job.dates }
+                            span("dates") {
+                                +"${job.startDate.formatToLongDate()} – ${job.endDate.formatToLongDate()}"
+                            }
                         }
                         ul {
                             job.bullets.forEach { bullet ->
@@ -112,7 +142,7 @@ fun generateHtml(cv: CvData): String {
                 cv.education.forEach { edu ->
                     div("job-header") {
                         h3 { +edu.degree }
-                        span("dates") { +edu.graduationYear }
+                        span("dates") { +"${edu.startDate.formatToLongDate()} – ${edu.graduationYear.formatToLongDate()}" }
                     }
                     p { +"${edu.institution}, ${edu.location}" }
                 }
