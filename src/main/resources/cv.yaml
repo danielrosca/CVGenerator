@@ -1,0 +1,44 @@
+personalInfo:
+  name: "Alex Miller"
+  location: "Berlin, Germany (Open to Remote B2B)"
+  phone: "+49 123 4567890"
+  email: "alex.miller.dev@email.com"
+  linkedin: "linkedin.com/in/alexmillerdev"
+  github: "github.com/alexmillerdev"
+  website: "alexmiller.dev"
+
+professionalSummary: "Results-oriented Full-Stack Consultant with 8+ years of experience architecting and delivering robust enterprise solutions. Expert in transforming monolithic Java applications into modern, scalable systems using React, microservices, and microfrontends. I partner with businesses to enhance system performance, improve user experience, and accelerate development cycles by leveraging a deep expertise in technologies like Java, React, Kafka, Docker, and Elasticsearch."
+
+technicalSkills:
+  backend: "Java, Spring Boot, Microservices, REST APIs, Kafka"
+  frontend: "React, JavaScript (ES6+), TypeScript, Node.js, HTML5, CSS3, Microfrontends"
+  databases: "PostgreSQL, MongoDB, Elasticsearch, SQL, NoSQL"
+  devopsAndCloud: "Docker, GitLab CI/CD, Kubernetes (basic), Git"
+  toolsAndMethodologies: "Agile/Scrum, TDD, Feature Flagging (split.io), Jira"
+
+experience:
+  - title: "Senior Full-Stack Developer / Consultant"
+    company: "Adobe Workfront"
+    location: "Remote"
+    dates: "2020 – Present"
+    bullets:
+      - "Engineered a critical reporting feature by building a new Java microservice (consuming from Kafka, processing in PostgreSQL) and a React microfrontend, resulting in a 30% faster data visualization."
+      - "Led the development of three core React microfrontends, decoupling the frontend architecture and improving page load times by 40%."
+      - "Re-engineered the primary search module using Elasticsearch, decreasing average search latency from 2s to 400ms."
+      - "Streamlined development by containerizing local environments with Docker, reducing new developer onboarding time from 3 days to 4 hours."
+      - "Utilized split.io for canary releases of new features, enabling zero-downtime rollouts via the GitLab CI/CD pipeline."
+
+  - title: "Senior Java Developer"
+    company: "E-Commerce Solutions Inc."
+    location: "Munich, Germany"
+    dates: "2017 – 2020"
+    bullets:
+      - "Developed core backend services using Java and Spring Boot, processing over 100,000 transactions per day."
+      - "Designed and implemented RESTful APIs to support new mobile and web client functionalities."
+      - "Optimized complex SQL queries in PostgreSQL, reducing latency on critical endpoints by over 50%."
+
+education:
+  - degree: "Bachelor of Science in Computer Science"
+    institution: "Technical University of Munich"
+    location: "Munich, Germany"
+    graduationYear: "2017"
