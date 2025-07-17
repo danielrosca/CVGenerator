@@ -20,6 +20,7 @@ experience:
   - title: "Senior Full-Stack Developer / Consultant"
     company: "Adobe Workfront"
     location: "Remote"
+    employmentType: "full-time"
     startDate: "2020-01-01"
     bullets:
       - "Engineered a critical reporting feature by building a new Java microservice (consuming from Kafka, processing in PostgreSQL) and a React microfrontend, resulting in a 30% faster data visualization."
@@ -31,6 +32,7 @@ experience:
   - title: "Senior Java Developer"
     company: "E-Commerce Solutions Inc."
     location: "Munich, Germany"
+    employmentType: "full-time"
     startDate: "2017-06-01"
     endDate: "2019-12-31"
     bullets:

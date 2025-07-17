@@ -3,6 +3,10 @@ package md.daniel_rosca.dto
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
 import java.util.Date
 
 // The root object for the entire CV data
@@ -57,10 +61,27 @@ data class TechnicalSkills(
     val otherSkills: List<String> = emptyList()
 )
 
+enum class EmploymentType {
+    FULL_TIME, PART_TIME, CONTRACT, INTERNSHIP, PET_PROJECT;
+    companion object {
+        fun fromString(value: String): EmploymentType = when (value.lowercase()) {
+            "full-time" -> FULL_TIME
+            "part-time" -> PART_TIME
+            "contract" -> CONTRACT
+            "internship" -> INTERNSHIP
+            "pet-project" -> PET_PROJECT
+            else -> throw IllegalArgumentException("Invalid employmentType: $value")
+        }
+    }
+}
+
 data class JobExperience(
     val title: String,
     val company: String,
     val location: String,
+    @JsonProperty("employmentType")
+    @JsonDeserialize(using = EmploymentTypeDeserializer::class)
+    val employmentType: EmploymentType,
     @JsonProperty("startDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val startDate: Date,
@@ -69,6 +90,17 @@ data class JobExperience(
     val endDate: Date?,
     val bullets: List<String>
 )
+
+class EmploymentTypeDeserializer : JsonDeserializer<EmploymentType>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): EmploymentType {
+        val value = p.text
+        return try {
+            EmploymentType.fromString(value)
+        } catch (e: IllegalArgumentException) {
+            throw ctxt.mappingException("employmentType must be one of: full-time, part-time, contract, internship, pet-project. Got: '$value'")
+        }
+    }
+}
 
 data class EducationEntry(
     val degree: String,

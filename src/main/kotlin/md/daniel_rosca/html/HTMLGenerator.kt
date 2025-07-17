@@ -142,6 +142,10 @@ fun generateHtml(cv: CvData): String {
                     div("job") {
                         div("job-header") {
                             h3 { +"${job.title} (${duration})" }
+                            span("employment-type") {
+                                +job.employmentType.name.replace('_', '-').lowercase().replaceFirstChar { it.uppercase() }
+                            }
+                            br {}
                             span("company") { +" at ${job.company}" }
                             br {}
                             span("dates") {
