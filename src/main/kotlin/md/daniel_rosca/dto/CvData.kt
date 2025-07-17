@@ -16,9 +16,19 @@ data class CvData(
     val technicalSkills: TechnicalSkills,
     val experience: List<JobExperience>,
     val education: List<EducationEntry>,
+    @JsonProperty("languages")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    val languages: List<Language>? = null,
     @JsonProperty("otherSections")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     val otherSections: List<OtherSection>? = null
+)
+
+// Language section
+
+data class Language(
+    val name: String,
+    val level: String
 )
 
 data class OtherSection(
@@ -43,9 +53,12 @@ data class PersonalInfo(
     val location: String,
     val phone: String,
     val email: String,
-    val linkedin: String,
-    val github: String,
-    val website: String
+    val links: List<Link>
+)
+
+data class Link(
+    val name: String,
+    val url: String
 )
 
 data class TechnicalSkills(

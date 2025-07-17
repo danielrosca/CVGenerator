@@ -1,17 +1,14 @@
 package md.daniel_rosca.pdf
 
-import org.xhtmlrenderer.pdf.ITextRenderer
+import com.itextpdf.html2pdf.HtmlConverter
 import java.io.File
 import java.io.FileOutputStream
 
 fun generatePdf(htmlContent: String, outputPath: String) {
     val outputFile = File(outputPath)
-    outputFile.parentFile.mkdirs() // Ensure parent directory exists
+    outputFile.parentFile.mkdirs()
 
-    FileOutputStream(outputFile).use { os ->
-        val renderer = ITextRenderer()
-        renderer.setDocumentFromString(htmlContent)
-        renderer.layout()
-        renderer.createPDF(os)
+    FileOutputStream(outputFile).use { outputStream ->
+        HtmlConverter.convertToPdf(htmlContent, outputStream)
     }
 }

@@ -58,12 +58,13 @@ fun generateHtml(cv: CvData): String {
     return createHTML(xhtmlCompatible = true).html {
         head {
             meta(charset = "UTF-8")
+            meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
             title("${cv.personalInfo.name} - CV")
             style {
                 unsafe {
                     +"""
                         body { 
-                            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                            font-family: Arial, Helvetica, sans-serif;
                             line-height: 1.6; 
                             color: #333;
                             max-width: 800px;
@@ -88,8 +89,11 @@ fun generateHtml(cv: CvData): String {
                         .job-header h3 { margin: 0; font-size: 1.1em; }
                         .job-header .company { font-style: italic; color: #555; }
                         .job-header .dates { color: #777; font-size: 0.9em; }
+                        .job-header .line { display: block; margin: 2px 0; }
+                        .job-header br { line-height: 1.2; }
                         .job ul { padding-left: 20px; margin-top: 10px; }
                         .job li { margin-bottom: 8px; }
+                        .preserve-newlines { white-space: pre-line; }
                         .skills-grid { display: grid; grid-template-columns: 150px 1fr; gap: 8px; }
                         .skills-grid strong { color: #1a1a1a; }
                     """
@@ -102,11 +106,13 @@ fun generateHtml(cv: CvData): String {
                 div("contact-info") {
                     span { +cv.personalInfo.location }
                     span { +" | " }
+                    span{ +cv.personalInfo.phone }
+                    span { +" | " }
                     a(href = "mailto:${cv.personalInfo.email}") { +cv.personalInfo.email }
-                    span { +" | " }
-                    a(href = "https://${cv.personalInfo.linkedin}", target = "_blank") { +cv.personalInfo.linkedin }
-                    span { +" | " }
-                    a(href = "https://${cv.personalInfo.github}", target = "_blank") { +cv.personalInfo.github }
+                    for (link in cv.personalInfo.links) {
+                        span { +" | " }
+                        a(href = link.url, target = "_blank") { +link.name }
+                    }
                 }
             }
 
@@ -120,19 +126,14 @@ fun generateHtml(cv: CvData): String {
                 div("skills-grid") {
                     strong { +"Backend: " }
                     span { +cv.technicalSkills.backend }
-                    br {}
                     strong { +"Frontend: " }
                     span { +cv.technicalSkills.frontend }
-                    br {}
                     strong { +"Databases: " }
                     span { +cv.technicalSkills.databases }
-                    br {}
                     strong { +"DevOps & Cloud: " }
                     span { +cv.technicalSkills.devopsAndCloud }
-                    br {}
                     strong { +"Tools & Methods: " }
                     span { +cv.technicalSkills.toolsAndMethodologies }
-                    br {}
                 }
             }
 
@@ -141,19 +142,19 @@ fun generateHtml(cv: CvData): String {
                 cv.experience.zip(jobDurations).forEach { (job, duration) ->
                     div("job") {
                         div("job-header") {
-                            h3 { +"${job.title} (${duration})" }
-                            span("employment-type") {
-                                +job.employmentType.name.replace('_', '-').lowercase().replaceFirstChar { it.uppercase() }
-                            }
-                            br {}
-                            span("company") { +" at ${job.company}" }
-                            br {}
-                            span("dates") {
-                                +"${job.startDate.formatToLongDate()} – "
-                                if (job.endDate == null) {
-                                    +"Present"
-                                } else {
-                                    +job.endDate.formatToLongDate()
+                            div {
+                                h3 { +"${job.title} (${duration})" }
+                                div("employment-type") {
+                                    +job.employmentType.name.replace('_', '-').lowercase().replaceFirstChar { it.uppercase() }
+                                }
+                                div("company") { +" at ${job.company}" }
+                                div("dates") {
+                                    +"${job.startDate.formatToLongDate()} – "
+                                    if (job.endDate == null) {
+                                        +"Present"
+                                    } else {
+                                        +job.endDate.formatToLongDate()
+                                    }
                                 }
                             }
                         }
@@ -177,6 +178,20 @@ fun generateHtml(cv: CvData): String {
                 }
             }
 
+            // Render languages section if present
+            cv.languages?.let { langs ->
+                if (langs.isNotEmpty()) {
+                    div("section") {
+                        h2 { +"Languages" }
+                        ul {
+                            langs.forEach { lang ->
+                                li { +"${lang.name}: ${lang.level}" }
+                            }
+                        }
+                    }
+                }
+            }
+
             // Render otherSections if present
             cv.otherSections?.forEach { section ->
                 div("section") {
@@ -187,7 +202,7 @@ fun generateHtml(cv: CvData): String {
                                 h3 { +entry.title }
                                 if (entry.companyOrOrganization != null) {
                                     span("company") { +" at ${entry.companyOrOrganization}" }
-                                    br {}
+                                    hr {}
                                 }
                                 if (entry.startDate != null) {
                                     span("dates") {
