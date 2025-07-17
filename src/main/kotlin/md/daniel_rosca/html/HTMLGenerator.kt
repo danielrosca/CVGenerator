@@ -189,13 +189,15 @@ fun generateHtml(cv: CvData): String {
                                     span("company") { +" at ${entry.companyOrOrganization}" }
                                     br {}
                                 }
-                                span("dates") {
-                                    +entry.startDate.formatToLongDate()
-                                    +" - "
-                                    if (entry.endDate != null) {
-                                        +entry.endDate.formatToLongDate()
-                                    } else {
-                                        +"Present"
+                                if (entry.startDate != null) {
+                                    span("dates") {
+                                        +entry.startDate.formatToLongDate()
+                                        +" - "
+                                        if (entry.endDate != null) {
+                                            +entry.endDate.formatToLongDate()
+                                        } else {
+                                            +"Present"
+                                        }
                                     }
                                 }
                             }

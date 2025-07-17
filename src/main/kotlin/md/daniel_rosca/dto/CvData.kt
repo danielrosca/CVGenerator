@@ -32,7 +32,7 @@ data class OtherSectionEntry(
     val description: String,
     @JsonProperty("startDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    val startDate: Date,
+    val startDate: Date?,
     @JsonProperty("endDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val endDate: Date?
