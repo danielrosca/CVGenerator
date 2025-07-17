@@ -11,7 +11,27 @@ data class CvData(
     val professionalSummary: String,
     val technicalSkills: TechnicalSkills,
     val experience: List<JobExperience>,
-    val education: List<EducationEntry>
+    val education: List<EducationEntry>,
+    @JsonProperty("otherSections")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    val otherSections: List<OtherSection>? = null
+)
+
+data class OtherSection(
+    val nameOfSection: String,
+    val entries: List<OtherSectionEntry>
+)
+
+data class OtherSectionEntry(
+    val companyOrOrganization: String?,
+    val title: String,
+    val description: String,
+    @JsonProperty("startDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val startDate: Date,
+    @JsonProperty("endDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val endDate: Date?
 )
 
 data class PersonalInfo(

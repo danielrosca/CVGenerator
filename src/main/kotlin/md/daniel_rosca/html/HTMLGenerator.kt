@@ -116,6 +116,27 @@ fun generateHtml(cv: CvData): String {
             }
 
             div("section") {
+                h2 { +"Technical Skills" }
+                div("skills-grid") {
+                    strong { +"Backend: " }
+                    span { +cv.technicalSkills.backend }
+                    br {}
+                    strong { +"Frontend: " }
+                    span { +cv.technicalSkills.frontend }
+                    br {}
+                    strong { +"Databases: " }
+                    span { +cv.technicalSkills.databases }
+                    br {}
+                    strong { +"DevOps & Cloud: " }
+                    span { +cv.technicalSkills.devopsAndCloud }
+                    br {}
+                    strong { +"Tools & Methods: " }
+                    span { +cv.technicalSkills.toolsAndMethodologies }
+                    br {}
+                }
+            }
+
+            div("section") {
                 h2 { +"Professional Experience (${totalDuration})" }
                 cv.experience.zip(jobDurations).forEach { (job, duration) ->
                     div("job") {
@@ -149,6 +170,36 @@ fun generateHtml(cv: CvData): String {
                         span("dates") { +"${edu.startDate.formatToLongDate()} – ${edu.graduationYear.formatToLongDate()}" }
                     }
                     p { +"${edu.institution}, ${edu.location}" }
+                }
+            }
+
+            // Render otherSections if present
+            cv.otherSections?.forEach { section ->
+                div("section") {
+                    h2 { +section.nameOfSection }
+                    section.entries.forEach { entry ->
+                        div("job") {
+                            div("job-header") {
+                                h3 { +entry.title }
+                                if (entry.companyOrOrganization != null) {
+                                    span("company") { +" at ${entry.companyOrOrganization}" }
+                                    br {}
+                                }
+                                span("dates") {
+                                    +entry.startDate.formatToLongDate()
+                                    +" - "
+                                    if (entry.endDate != null) {
+                                        +entry.endDate.formatToLongDate()
+                                    } else {
+                                        +"Present"
+                                    }
+                                }
+                            }
+                            p {
+                                +entry.description
+                            }
+                        }
+                    }
                 }
             }
         }

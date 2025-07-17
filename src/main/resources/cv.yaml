@@ -44,3 +44,22 @@ education:
     location: "Munich, Germany"
     startDate: "2013-10-01"
     graduationYear: "2017-07-01"
+
+otherSections:
+  - nameOfSection: "Leadership Roles"
+    entries:
+      - title: "President of Students' Union Council"
+        companyOrOrganization: "Some college"
+        startDate: "2020-09-01"
+        endDate: "2023-04-30"
+        description:
+          "Some Presidential Stuff"
+      - title: "Vice-Headmaster"
+        startDate: "2022-01-01"
+        endDate: "2023-04-30"
+        description: "SomeDescription"
+  - nameOfSection: "SomeOtherSection"
+    entries:
+      - title: "Title"
+        startDate: "2020-01-01"
+        description: "someText"
