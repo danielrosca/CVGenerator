@@ -11,8 +11,8 @@
     <properties>
         <!-- Use the latest stable version of Kotlin -->
         <kotlin.version>1.9.22</kotlin.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -49,15 +49,22 @@
             <artifactId>flying-saucer-pdf-openpdf</artifactId>
             <version>9.1.22</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>
-            <version>9.2.0</version>
+            <version>9.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>html2pdf</artifactId>
             <version>6.2.0</version>
+        </dependency>-->
+
+        <!-- Playwright for browser-grade HTML rendering and PDF printing -->
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>1.56.0</version>
         </dependency>
     </dependencies>
 

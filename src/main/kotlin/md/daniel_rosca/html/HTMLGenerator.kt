@@ -60,42 +60,138 @@ fun generateHtml(cv: CvData): String {
             meta(charset = "UTF-8")
             meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
             title("${cv.personalInfo.name} - CV")
+//            link(rel = "stylesheet", href = "styles.css", type = "text/css")
             style {
                 unsafe {
                     +"""
-                        body { 
-                            font-family: Arial, Helvetica, sans-serif;
-                            line-height: 1.6; 
-                            color: #333;
-                            max-width: 800px;
-                            margin: 40px auto;
-                            padding: 20px;
-                            background-color: #ffffff;
-                        }
-                        .header { text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
-                        .header h1 { margin: 0; color: #1a1a1a; font-size: 2.5em; }
-                        .contact-info { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-top: 10px; font-size: 0.9em; }
-                        .contact-info a { text-decoration: none; color: #007bff; }
-                        .section h2 { 
-                            font-size: 1.4em; 
-                            color: #333;
-                            border-bottom: 2px solid #007bff;
-                            padding-bottom: 5px; 
-                            margin-top: 30px;
-                            margin-bottom: 15px;
-                        }
-                        .job { margin-bottom: 20px; }
-                        .job-header { display: flex; justify-content: space-between; align-items: baseline; }
-                        .job-header h3 { margin: 0; font-size: 1.1em; }
-                        .job-header .company { font-style: italic; color: #555; }
-                        .job-header .dates { color: #777; font-size: 0.9em; }
-                        .job-header .line { display: block; margin: 2px 0; }
-                        .job-header br { line-height: 1.2; }
-                        .job ul { padding-left: 20px; margin-top: 10px; }
-                        .job li { margin-bottom: 8px; }
-                        .preserve-newlines { white-space: pre-line; }
-                        .skills-grid { display: grid; grid-template-columns: 150px 1fr; gap: 8px; }
-                        .skills-grid strong { color: #1a1a1a; }
+body { 
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 0.99; 
+    color: #333;
+    /* max-width: 800px; */
+    margin: 5px;
+    padding: 5px;
+    background-color: #ffffff;
+}
+.header { 
+    text-align: center; 
+    border-bottom: 2px solid #eee; 
+    padding-bottom: 15px; 
+    margin-bottom: 15px; 
+}
+.header h1 { 
+    margin: 0; 
+    color: #1a1a1a; 
+    font-size: 1.4em; 
+}
+/*.contact-info {
+    display: flex; 
+    justify-content: center; 
+    flex-wrap: wrap; 
+    gap: 3px; 
+    margin-top: 3px; 
+    font-size: 0.7em;
+}*/
+.contact-info{
+  display:flex;
+  align-items:center;
+  justify-content:space-between; /* or space-evenly if you want equal space at the ends too */
+  width:100%;
+  flex-wrap:nowrap;              /* keep on one line */
+  font-size:.7em;
+}
+.contact-info > *{
+  white-space:nowrap;            /* prevent breaking inside items */
+  text-align:center;
+  flex:1 1 0;                    /* distribute width evenly */
+}
+.contact-info a { 
+    text-decoration: none; 
+    color: #007bff; 
+}
+.section h2 { 
+    font-size: 0.95em; 
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px; 
+    margin-top: 10px;
+    margin-bottom: 7px;
+}
+.section ul { 
+    padding-left: 20px; 
+    margin-top: 10px; 
+}
+.section li { 
+    margin-bottom: 5px; 
+    line-height: 0.99; 
+}
+.job { 
+    margin-bottom: 20px; 
+}
+/*.job-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: baseline; 
+}*/
+.job-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between; /* or space-evenly if you want equal space at the ends too */
+    width:100%;
+    flex-wrap:nowrap;              /* keep on one line */
+}
+.job-header > *{
+  white-space:nowrap;            /* prevent breaking inside items */
+  text-align:center;
+  flex:1 1 0;                    /* distribute width evenly */
+}
+.job-header h3 { 
+    margin: 0; 
+    font-size: 0.9em; 
+}
+.job-header .company {
+    font-style: italic; 
+    color: #555; 
+}
+.job-header .dates { 
+    color: #777; 
+    font-size: 0.7em; 
+}
+.job-header .line { 
+    display: block; 
+    margin: 2px 0; 
+}
+.job-header br { 
+    line-height: 0.99; 
+}
+.job ul { 
+    padding-left: 20px; 
+    margin-top: 10px; 
+}
+.job li { 
+    margin-bottom: 5px; 
+    line-height: 0.99; 
+}
+.preserve-newlines { 
+    white-space: pre-line; 
+}
+.skills-grid { 
+    display: grid; 
+    grid-template-columns: 150px 1fr; 
+    gap: 8px; 
+}
+.skills-grid strong { 
+    color: #1a1a1a; 
+}
+
+/* Print-specific tweaks to match browser print */
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+@page { size: A4; margin: 0.5in; }
+
+
+
                     """
                 }
             }
@@ -143,12 +239,12 @@ fun generateHtml(cv: CvData): String {
                     div("job") {
                         div("job-header") {
                             div {
-                                h3 { +"${job.title} (${duration})" }
-                                div("employment-type") {
+                                span { +"${job.title} (${duration})" }
+                                span("employment-type") {
                                     +job.employmentType.name.replace('_', '-').lowercase().replaceFirstChar { it.uppercase() }
                                 }
-                                div("company") { +" at ${job.company}" }
-                                div("dates") {
+                                span("company") { +" at ${job.company}" }
+                                span("dates") {
                                     +"${job.startDate.formatToLongDate()} – "
                                     if (job.endDate == null) {
                                         +"Present"
