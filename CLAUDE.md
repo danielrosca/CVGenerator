@@ -68,7 +68,7 @@ Existing sample yaml files under `src/main/resources/` (17 total, across `Dec11/
 1. ~~`pom.xml`'s `maven-jar-plugin` manifest declared `mainClass = com.cvgenerator.MainKt`~~ — **Fixed in TASK-006.** Now `md.daniel_rosca.MainKt`, and a `maven-shade-plugin` execution bundles a runnable fat jar on `mvn package`; `java -jar target/cv-generator-1.0-SNAPSHOT.jar` runs standalone with no IDE and no classpath args.
 2. ~~`flying-saucer-pdf-openpdf` / commented-out iText dependencies~~ — **Fixed in TASK-006.** Both removed from `pom.xml`.
 3. **`src/main/resources/DejaVuSans.ttf`** — still not referenced anywhere in code. Kept (not deleted) since it was deliberately committed alongside the CV layout/example-CV work; if a concrete use (e.g. custom font embedding for non-Latin scripts) doesn't materialize, revisit deleting it.
-4. **Zero tests exist** — no `src/test/kotlin` content, and no test dependency (JUnit/Kotest/MockK) declared in `pom.xml` at all. (TASK-008)
+4. ~~Zero tests exist~~ — **Fixed in TASK-008.** 24 tests across 4 classes; see Testing section below.
 5. ~~No linter/formatter configured~~ — **Fixed in TASK-007.** `ktlint-maven-plugin` bound to `verify`. Two rules disabled via `.editorconfig` with documented justification: `package-name` (the existing `md.daniel_rosca` package predates this and renaming it would ripple through every file, `pom.xml`'s manifest config, and the planned REST wrapper package) and `no-wildcard-imports` for `HTMLGenerator.kt` only (kotlinx.html's DSL exposes dozens of tag-builder functions; explicit imports for that one file would be a long, low-value list — the wildcard is the idiomatic pattern kotlinx.html's own docs use).
 6. ~~No Maven Wrapper~~ — **Fixed in TASK-006.** `./mvnw`/`mvnw.cmd` committed, pinned to Maven 3.9.11.
 7. **`Main.kt`'s hardcoded input/output paths** must change every time you want to generate a different CV — this is expected to go away once Phase 3 replaces the CLI entry point with a REST endpoint, but until then it's the normal (manual) way this tool is used.
@@ -89,4 +89,9 @@ Running via IDE (IntelliJ run config "MainKt") still works too — `mvn exec:jav
 
 ## Testing
 
-No tests exist yet — see `../TASKS.md` Phase 0 for the task to add them (YAML parsing edge cases, HTML generation for each optional-field combination, duration calculation logic in `HTMLGenerator.calculateDuration`/`sumDurations` are the highest-value first targets since they're pure functions with no I/O).
+```bash
+./mvnw test      # CvDataDeserializationTest, HTMLGeneratorDurationTest, HTMLGeneratorRenderingTest, PDFGeneratorTest
+./mvnw verify    # + ktlint check
+```
+
+`HTMLGeneratorDurationTest` reaches `calculateDuration`/`sumDurations`/`Duration` (all private, no public seam) via reflection for setup/invocation only — production code is untouched. `PDFGeneratorTest` requires Playwright's Chromium to be available locally (downloaded automatically on first run in a fresh environment, same as running the app itself).
