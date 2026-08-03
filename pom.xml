@@ -4,6 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Adopted in TASK-011 alongside the REST wrapper, matching WebScraper's/job-applier's
+         Spring Boot version. Its BOM now manages Jackson and JUnit versions consistently
+         (the explicit jackson version pins and the standalone junit-bom import below were
+         both removed - two separate, possibly-disagreeing version sources caused exactly this
+         kind of runtime NoSuchMethodError in job-applier's TASK-008; letting one BOM own every
+         jackson-*/junit-* artifact avoids repeating that. -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.3</version>
+        <relativePath/>
+    </parent>
+
     <groupId>com.cvgenerator</groupId>
     <artifactId>cv-generator</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -16,21 +29,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- kotlin-test-junit5 transitively pulls an older junit-jupiter-api (5.6.3) than the one
-         declared below (5.10.2); without this BOM import, junit-jupiter-params ends up loaded
-         against the older API at runtime and fails with NoSuchMethodError on @ParameterizedTest. -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>5.10.2</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- Kotlin Standard Library - THIS IS THE FIX for 'println' not found -->
         <dependency>
@@ -39,16 +37,15 @@
             <version>${kotlin.version}</version>
         </dependency>
 
-        <!-- For parsing YAML file into Kotlin objects -->
+        <!-- For parsing YAML file into Kotlin objects. Versions now managed by
+             spring-boot-starter-parent's BOM (was explicitly pinned to 2.15.2 before TASK-011). -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
-            <version>2.15.2</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.15.2</version>
         </dependency>
 
         <!-- For type-safe HTML generation in Kotlin -->
@@ -65,6 +62,12 @@
             <version>1.56.0</version>
         </dependency>
 
+        <!-- REST wrapper (TASK-011) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -75,7 +78,11 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -112,43 +119,23 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
-            <!-- Maven JAR Plugin: Configures the main class to make the JAR runnable -->
+            <!-- Spring Boot Maven Plugin: repackages into an executable jar whose primary
+                 behavior (as of TASK-011) is starting the REST server, not the Main.kt CLI -
+                 replaces TASK-006's maven-shade-plugin, which doesn't merge Spring's
+                 META-INF/spring/*.imports autoconfiguration files correctly across dependency
+                 jars (a well-known shade+Spring Boot gotcha); the nested-jar format Boot's own
+                 plugin produces is the standard, well-tested way to avoid that. Main.kt itself
+                 is unaffected - still fully runnable via IDE or `java -cp <classpath> md.daniel_rosca.MainKt`. -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- No <executions> block needed - spring-boot-starter-parent already binds a
+                     default `repackage` execution to the `package` phase; declaring another one
+                     here just ran it twice. -->
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>md.daniel_rosca.MainKt</mainClass>
-                        </manifest>
-                    </archive>
+                    <mainClass>md.daniel_rosca.web.CvGeneratorApplicationKt</mainClass>
                 </configuration>
             </plugin>
-            <!-- Maven Shade Plugin: bundles all dependencies into a single runnable jar,
-                 so `mvn package` produces something `java -jar` can actually run standalone. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>md.daniel_rosca.MainKt</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Kotlin linter/formatter, bound to `verify` -->
             <plugin>
                 <groupId>com.github.gantsign.maven</groupId>

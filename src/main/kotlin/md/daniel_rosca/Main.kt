@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import md.daniel_rosca.dto.CvData
-import md.daniel_rosca.html.generateHtml
-import md.daniel_rosca.pdf.generatePdf
+import md.daniel_rosca.web.CvGenerationService
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -29,23 +28,21 @@ fun main() {
         }
     println("✅ Successfully parsed $inputYamlPath")
 
-    // --- 3. Generate HTML ---
-    val htmlContent = generateHtml(cvData)
+    // --- 3 & 4. Generate HTML then PDF (shared with the REST wrapper, see CvGenerationService) ---
+    val htmlContent =
+        try {
+            CvGenerationService().generate(cvData, outputPdfPath)
+        } catch (e: Exception) {
+            System.err.println("Error generating CV: ${e.message}")
+            e.printStackTrace()
+            exitProcess(1)
+        }
     File(outputHtmlPath).apply {
         parentFile.mkdirs()
         writeText(htmlContent)
     }
     println("✅ Successfully generated HTML: $outputHtmlPath")
-
-    // --- 4. Generate PDF from HTML ---
-    try {
-        generatePdf(htmlContent, outputPdfPath)
-        println("✅ Successfully generated PDF: $outputPdfPath")
-    } catch (e: Exception) {
-        System.err.println("Error generating PDF: ${e.message}")
-        e.printStackTrace()
-        exitProcess(1)
-    }
+    println("✅ Successfully generated PDF: $outputPdfPath")
 
     println("\nCV Generation Complete!")
 }

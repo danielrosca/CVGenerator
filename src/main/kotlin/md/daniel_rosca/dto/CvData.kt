@@ -120,8 +120,13 @@ class EmploymentTypeDeserializer : JsonDeserializer<EmploymentType>() {
         return try {
             EmploymentType.fromString(value)
         } catch (e: IllegalArgumentException) {
-            throw ctxt.mappingException(
-                "employmentType must be one of: full-time, part-time, contract, internship, pet-project. Got: '$value'",
+            // ctxt.mappingException(String) was removed (not just deprecated) in the Jackson
+            // version pulled in once TASK-011 added spring-boot-starter-parent's BOM management -
+            // reportInputMismatch is the current, non-deprecated replacement.
+            ctxt.reportInputMismatch(
+                EmploymentType::class.java,
+                "employmentType must be one of: full-time, part-time, contract, internship, pet-project. Got: '%s'",
+                value,
             )
         }
     }
