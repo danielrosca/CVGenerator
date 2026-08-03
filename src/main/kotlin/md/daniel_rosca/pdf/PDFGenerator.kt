@@ -11,7 +11,10 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-fun generatePdf(htmlContent: String, outputPath: String) {
+fun generatePdf(
+    htmlContent: String,
+    outputPath: String,
+) {
     // Ensure output directory exists
     val outputFile = File(outputPath)
     outputFile.parentFile?.mkdirs()
@@ -31,22 +34,23 @@ fun generatePdf(htmlContent: String, outputPath: String) {
                 // Navigate and wait until network is idle (covers fonts/images if any)
                 page.navigate(
                     fileUri,
-                    Page.NavigateOptions().setWaitUntil(WaitUntilState.NETWORKIDLE)
+                    Page.NavigateOptions().setWaitUntil(WaitUntilState.NETWORKIDLE),
                 )
 
                 // Export to PDF with background graphics and A4 format
-                val pdfOptions = Page.PdfOptions()
-                    .setPath(Paths.get(outputPath))
-                    .setPrintBackground(true)
-                    .setFormat("A4")
-                    .setPreferCSSPageSize(false)
-                    .setMargin(
-                        Margin()
-                            .setTop("0")
-                            .setLeft("0")
-                            .setRight("0")
-                            .setBottom("0")
-                    )
+                val pdfOptions =
+                    Page.PdfOptions()
+                        .setPath(Paths.get(outputPath))
+                        .setPrintBackground(true)
+                        .setFormat("A4")
+                        .setPreferCSSPageSize(false)
+                        .setMargin(
+                            Margin()
+                                .setTop("0")
+                                .setLeft("0")
+                                .setRight("0")
+                                .setBottom("0"),
+                        )
 
                 page.pdf(pdfOptions)
             }

@@ -1,0 +1,15 @@
+root = true
+
+[*.{kt,kts}]
+# The existing package (md.daniel_rosca) predates this lint pass and is used throughout the
+# codebase, pom.xml's manifest mainClass config, and the REST wrapper package planned in
+# ../TASKS.md. Renaming it to satisfy this style rule would be a project-wide refactor, not a
+# formatting fix, so it's disabled here instead.
+ktlint_standard_package-name = disabled
+
+[**/HTMLGenerator.kt]
+# kotlinx.html's type-safe HTML DSL exposes dozens of top-level tag-builder functions (div, span,
+# h1..h3, ul, li, a, p, meta, style, ...); explicitly importing each one adds a long low-value
+# import block for a single well-known DSL. A wildcard import here is idiomatic (kotlinx.html's
+# own docs/samples use it the same way), so this rule is disabled for this file only.
+ktlint_standard_no-wildcard-imports = disabled

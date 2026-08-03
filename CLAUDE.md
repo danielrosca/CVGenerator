@@ -48,7 +48,7 @@ CvData
 - All dates are `java.util.Date`, deserialized strictly as `yyyy-MM-dd` via `@JsonFormat`.
 - `employmentType` accepts `full-time | part-time | contract | internship | pet-project` (hyphenated, lowercase) via a custom `EmploymentTypeDeserializer`; anything else throws a Jackson mapping exception with a descriptive message.
 - `HTMLGenerator` computes per-job and total experience duration itself (`calculateDuration`/`sumDurations`) from `startDate`/`endDate` — the yaml never states duration directly.
-- **`technicalSkills.otherSkills` is parsed but never rendered** by `HTMLGenerator` — it's dead data in the current schema. Decide during the REST wrapper work whether to render it or drop it from the schema; don't silently leave it half-wired.
+- **`technicalSkills.otherSkills`** — **fixed in TASK-007.** Now rendered as an "Other:" row in the Technical Skills section (joined with `, `), shown only when the list is non-empty — no existing sample yaml populates it, so no existing output changed.
 
 Existing sample yaml files under `src/main/resources/` (17 total, across `Dec11/`, `Feb9 2026/`, `Google/`, root) are all the same person's CV re-tailored per company/vacancy — useful as fixtures for tests, but note: one (`Dec11/Microinvest_Senior/cv.yaml`) is written in Russian with inconsistent indentation, and `Feb9 2026/MICB/` has a `vacancy.txt` but no matching `cv.yaml`. Don't assume every sample file is a clean, representative fixture without checking it first.
 
@@ -69,7 +69,7 @@ Existing sample yaml files under `src/main/resources/` (17 total, across `Dec11/
 2. ~~`flying-saucer-pdf-openpdf` / commented-out iText dependencies~~ — **Fixed in TASK-006.** Both removed from `pom.xml`.
 3. **`src/main/resources/DejaVuSans.ttf`** — still not referenced anywhere in code. Kept (not deleted) since it was deliberately committed alongside the CV layout/example-CV work; if a concrete use (e.g. custom font embedding for non-Latin scripts) doesn't materialize, revisit deleting it.
 4. **Zero tests exist** — no `src/test/kotlin` content, and no test dependency (JUnit/Kotest/MockK) declared in `pom.xml` at all. (TASK-008)
-5. **No linter/formatter configured** — no ktlint, detekt, or `.editorconfig`. (TASK-007)
+5. ~~No linter/formatter configured~~ — **Fixed in TASK-007.** `ktlint-maven-plugin` bound to `verify`. Two rules disabled via `.editorconfig` with documented justification: `package-name` (the existing `md.daniel_rosca` package predates this and renaming it would ripple through every file, `pom.xml`'s manifest config, and the planned REST wrapper package) and `no-wildcard-imports` for `HTMLGenerator.kt` only (kotlinx.html's DSL exposes dozens of tag-builder functions; explicit imports for that one file would be a long, low-value list — the wildcard is the idiomatic pattern kotlinx.html's own docs use).
 6. ~~No Maven Wrapper~~ — **Fixed in TASK-006.** `./mvnw`/`mvnw.cmd` committed, pinned to Maven 3.9.11.
 7. **`Main.kt`'s hardcoded input/output paths** must change every time you want to generate a different CV — this is expected to go away once Phase 3 replaces the CLI entry point with a REST endpoint, but until then it's the normal (manual) way this tool is used.
 8. ~~Error handling in `Main.kt` doesn't fail loudly~~ — **Fixed in TASK-006.** Both the YAML-parse and PDF-generation failure paths now call `exitProcess(1)` after logging to `System.err`, so a broken run returns a non-zero exit code instead of looking like partial success.
