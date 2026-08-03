@@ -26,4 +26,11 @@ class CvGenerationService {
         generatePdf(htmlContent, outputPdfPath)
         return htmlContent
     }
+
+    /**
+     * Renders [cvData] to HTML only, skipping the Playwright/PDF step entirely - used by
+     * [CvGeneratorController]'s `html=true` query param (CHORE-001) so a caller inspecting the
+     * intermediate markup doesn't pay for a PDF render it's going to discard.
+     */
+    fun renderHtml(cvData: CvData): String = generateHtml(cvData)
 }
