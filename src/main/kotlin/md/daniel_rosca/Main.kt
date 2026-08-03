@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import md.daniel_rosca.html.generateHtml
 import md.daniel_rosca.pdf.generatePdf
 import java.io.File
+import kotlin.system.exitProcess
 
 fun main() {
     println("CV Generator Started...")
@@ -22,8 +23,8 @@ fun main() {
         val yamlFile = File(inputYamlPath)
         mapper.readValue(yamlFile, CvData::class.java)
     } catch (e: Exception) {
-        println("Error reading or parsing YAML file: ${e.message}")
-        return
+        System.err.println("Error reading or parsing YAML file: ${e.message}")
+        exitProcess(1)
     }
     println("✅ Successfully parsed $inputYamlPath")
 
@@ -40,8 +41,9 @@ fun main() {
         generatePdf(htmlContent, outputPdfPath)
         println("✅ Successfully generated PDF: $outputPdfPath")
     } catch (e: Exception) {
-        println("Error generating PDF: ${e.message}")
+        System.err.println("Error generating PDF: ${e.message}")
         e.printStackTrace()
+        exitProcess(1)
     }
 
     println("\nCV Generation Complete!")

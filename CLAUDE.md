@@ -11,8 +11,8 @@ Kotlin tool that turns a YAML CV description into a styled PDF. Built and mainta
 | Language | Kotlin 1.9.22, Java 21 target |
 | YAML parsing | Jackson (`jackson-module-kotlin` + `jackson-dataformat-yaml`) |
 | HTML generation | kotlinx.html DSL (`kotlinx-html-jvm`) |
-| PDF generation | **Microsoft Playwright** (headless Chromium) — see Known Issues, the `pom.xml`-declared `flying-saucer-pdf-openpdf` dependency is dead code, not actually used |
-| Packaging | Plain Maven, no fat-jar/shade/assembly plugin configured |
+| PDF generation | **Microsoft Playwright** (headless Chromium) |
+| Packaging | Maven Shade (fat jar via `mvn package`, runnable with `java -jar`) |
 
 ---
 
@@ -65,14 +65,14 @@ Existing sample yaml files under `src/main/resources/` (17 total, across `Dec11/
 
 ## Known Issues (found during Phase 0 review — see `../TASKS.md`)
 
-1. **`pom.xml`'s `maven-jar-plugin` manifest declares `mainClass = com.cvgenerator.MainKt`**, but the actual package is `md.daniel_rosca` — running `java -jar` on a plain `mvn package` output would fail with `ClassNotFoundException`. There's also no shade/assembly plugin to bundle dependencies into a runnable fat jar, so `mvn package` alone doesn't currently produce anything directly runnable — the project is only ever run from the IDE today.
-2. **`flying-saucer-pdf-openpdf` is declared as a dependency but not used anywhere in code** — dead weight, remove it (or the equally-unused commented-out iText dependencies) once confirmed.
-3. **`src/main/resources/DejaVuSans.ttf`** — see above, orphaned resource.
-4. **Zero tests exist** — no `src/test/kotlin` content, and no test dependency (JUnit/Kotest/MockK) declared in `pom.xml` at all.
-5. **No linter/formatter configured** — no ktlint, detekt, or `.editorconfig`.
-6. **No Maven Wrapper** (`mvnw`) committed.
+1. ~~`pom.xml`'s `maven-jar-plugin` manifest declared `mainClass = com.cvgenerator.MainKt`~~ — **Fixed in TASK-006.** Now `md.daniel_rosca.MainKt`, and a `maven-shade-plugin` execution bundles a runnable fat jar on `mvn package`; `java -jar target/cv-generator-1.0-SNAPSHOT.jar` runs standalone with no IDE and no classpath args.
+2. ~~`flying-saucer-pdf-openpdf` / commented-out iText dependencies~~ — **Fixed in TASK-006.** Both removed from `pom.xml`.
+3. **`src/main/resources/DejaVuSans.ttf`** — still not referenced anywhere in code. Kept (not deleted) since it was deliberately committed alongside the CV layout/example-CV work; if a concrete use (e.g. custom font embedding for non-Latin scripts) doesn't materialize, revisit deleting it.
+4. **Zero tests exist** — no `src/test/kotlin` content, and no test dependency (JUnit/Kotest/MockK) declared in `pom.xml` at all. (TASK-008)
+5. **No linter/formatter configured** — no ktlint, detekt, or `.editorconfig`. (TASK-007)
+6. ~~No Maven Wrapper~~ — **Fixed in TASK-006.** `./mvnw`/`mvnw.cmd` committed, pinned to Maven 3.9.11.
 7. **`Main.kt`'s hardcoded input/output paths** must change every time you want to generate a different CV — this is expected to go away once Phase 3 replaces the CLI entry point with a REST endpoint, but until then it's the normal (manual) way this tool is used.
-8. **Error handling in `Main.kt` doesn't fail loudly**: both the YAML-parse and PDF-generation try/catch blocks `println` the error and continue/return without a non-zero exit code — a broken run currently looks like partial success from the outside (e.g. in a CI log or a script checking exit codes). Fix as part of Phase 3 since the REST wrapper needs real error propagation (HTTP 400/500) anyway.
+8. ~~Error handling in `Main.kt` doesn't fail loudly~~ — **Fixed in TASK-006.** Both the YAML-parse and PDF-generation failure paths now call `exitProcess(1)` after logging to `System.err`, so a broken run returns a non-zero exit code instead of looking like partial success.
 
 ---
 
@@ -81,9 +81,11 @@ Existing sample yaml files under `src/main/resources/` (17 total, across `Dec11/
 ```bash
 cd CVGenerator
 # Edit the hardcoded paths in Main.kt to point at the yaml you want to generate
-mvn compile
-# Run via IDE (IntelliJ run config "MainKt") — `mvn exec:java` is not configured
+./mvnw clean package
+java -jar target/cv-generator-1.0-SNAPSHOT.jar
 ```
+
+Running via IDE (IntelliJ run config "MainKt") still works too — `mvn exec:java` is still not configured, the jar is the supported non-IDE path.
 
 ## Testing
 
