@@ -75,7 +75,7 @@ body {
 }
 .header { 
     text-align: center; 
-    border-bottom: 2px solid #eee; 
+    /*border-bottom: 2px solid #eee; */
     padding-bottom: 15px; 
     margin-bottom: 15px; 
 }
@@ -133,21 +133,42 @@ body {
     justify-content: space-between; 
     align-items: baseline; 
 }*/
-.job-header {
-    display:flex;
-    align-items:center;
-    justify-content:space-between; /* or space-evenly if you want equal space at the ends too */
-    width:100%;
-    flex-wrap:nowrap;              /* keep on one line */
+.job-header{
+  display:grid;
+  grid-auto-flow:column;     /* one column per child */
+  grid-auto-columns:1fr;     /* each child = equal width */
+  column-gap:.5rem;          /* visual gap between cells */
+  align-items:baseline;
+  width:100%;
 }
+
+.job-header{
+  display:grid;
+  grid-auto-flow:column;                 /* lay children left→right in a single row */
+  grid-auto-columns:minmax(0,1fr);       /* every column = 1fr, shrinkable */
+  column-gap:.5rem;
+  align-items:baseline;                  /* nicer text alignment */
+  width:100%;
+}
+
 .job-header > *{
-  white-space:nowrap;            /* prevent breaking inside items */
-  text-align:center;
-  flex:1 1 0;                    /* distribute width evenly */
+  min-width:0;
+  white-space:normal;                    /* allow wrapping */
+  overflow-wrap:anywhere;
+  hyphens:auto;
 }
-.job-header h3 { 
-    margin: 0; 
-    font-size: 0.9em; 
+
+/* your h3 styles + span 2 columns */
+.job-header h3{
+  margin:0;
+  font-size:.9em;
+  grid-column:span 2;                    /* <-- take two columns */
+}
+
+/* (optional) on narrow screens, stack and reset the span */
+@media (max-width:680px){
+  .job-header{ grid-auto-flow:row; }
+  .job-header h3{ grid-column:auto; }
 }
 .job-header .company {
     font-style: italic; 
@@ -188,10 +209,6 @@ body {
 @media print {
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
-@page { size: A4; margin: 0.5in; }
-
-
-
                     """
                 }
             }
@@ -205,9 +222,11 @@ body {
                     span{ +cv.personalInfo.phone }
                     span { +" | " }
                     a(href = "mailto:${cv.personalInfo.email}") { +cv.personalInfo.email }
-                    for (link in cv.personalInfo.links) {
-                        span { +" | " }
-                        a(href = link.url, target = "_blank") { +link.name }
+                    if (cv.personalInfo.links != null) {
+                        for (link in cv.personalInfo.links) {
+                            span { +" | " }
+                            a(href = link.url, target = "_blank") { +link.name }
+                        }
                     }
                 }
             }
@@ -238,26 +257,19 @@ body {
                 cv.experience.zip(jobDurations).forEach { (job, duration) ->
                     div("job") {
                         div("job-header") {
-                            div {
-                                span { +"${job.title} (${duration})" }
-                                span("employment-type") {
-                                    +job.employmentType.name.replace('_', '-').lowercase().replaceFirstChar { it.uppercase() }
-                                }
-                                span("company") { +" at ${job.company}" }
-                                span("dates") {
-                                    +"${job.startDate.formatToLongDate()} – "
-                                    if (job.endDate == null) {
-                                        +"Present"
-                                    } else {
-                                        +job.endDate.formatToLongDate()
-                                    }
-                                }
+                            h3 { +"${job.title} (${duration})" }
+                            span("employment-type") {
+                                +job.employmentType.name.replace('_','-').lowercase()
+                                    .replaceFirstChar { it.uppercase() }
+                            }
+                            span("company") { +"at ${job.company}" }
+                            span("dates") {
+                                +"${job.startDate.formatToLongDate()} – "
+                                if (job.endDate == null) +"Present" else +job.endDate.formatToLongDate()
                             }
                         }
                         ul {
-                            job.bullets.forEach { bullet ->
-                                li { +bullet }
-                            }
+                            job.bullets.forEach { li { +it } }
                         }
                     }
                 }
@@ -297,24 +309,18 @@ body {
                             div("job-header") {
                                 h3 { +entry.title }
                                 if (entry.companyOrOrganization != null) {
-                                    span("company") { +" at ${entry.companyOrOrganization}" }
-                                    hr {}
+                                    span("company") { +"at ${entry.companyOrOrganization}" }
                                 }
                                 if (entry.startDate != null) {
                                     span("dates") {
-                                        +entry.startDate.formatToLongDate()
-                                        +" - "
-                                        if (entry.endDate != null) {
-                                            +entry.endDate.formatToLongDate()
-                                        } else {
-                                            +"Present"
-                                        }
+                                        +entry.startDate.formatToLongDate(); +" – "
+                                        if (entry.endDate != null) +entry.endDate.formatToLongDate() else +"Present"
                                     }
                                 }
                             }
-                            p {
-                                +entry.description
-                            }
+//                            hr {} // <- if you want it, keep it OUTSIDE the header so layout isn’t broken
+
+                            p { +entry.description }
                         }
                     }
                 }

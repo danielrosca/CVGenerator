@@ -1,4 +1,5 @@
-body { 
+@page { size: A4; margin: 0; }
+body {
     font-family: Arial, Helvetica, sans-serif;
     line-height: 0.99; 
     color: #333;
@@ -9,7 +10,7 @@ body {
 }
 .header { 
     text-align: center; 
-    border-bottom: 2px solid #eee; 
+    border-bottom: 2px solid #eee;
     padding-bottom: 15px; 
     margin-bottom: 15px; 
 }
@@ -40,87 +41,103 @@ body {
   flex:1 1 0;                    /* distribute width evenly */
 }
 .contact-info a {
-    text-decoration: none; 
-    color: #007bff; 
+    text-decoration: none;
+    color: #007bff;
 }
-.section h2 { 
-    font-size: 0.95em; 
+.section h2 {
+    font-size: 0.95em;
     color: #333;
     border-bottom: 2px solid #007bff;
-    padding-bottom: 5px; 
+    padding-bottom: 5px;
     margin-top: 10px;
     margin-bottom: 7px;
 }
-.section ul { 
-    padding-left: 20px; 
-    margin-top: 10px; 
+.section ul {
+    padding-left: 20px;
+    margin-top: 10px;
 }
-.section li { 
-    margin-bottom: 5px; 
-    line-height: 0.99; 
+.section li {
+    margin-bottom: 5px;
+    line-height: 0.99;
 }
-.job { 
-    margin-bottom: 20px; 
+.job {
+    margin-bottom: 20px;
 }
 /*.job-header {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: baseline; 
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
 }*/
 .job-header{
-  display:flex;
-  justify-content:space-between; /* equal space between items, none at the ends */
-  align-items:center;
+  display:grid;
+  grid-auto-flow:column;     /* one column per child */
+  grid-auto-columns:1fr;     /* each child = equal width */
+  column-gap:.5rem;          /* visual gap between cells */
+  align-items:baseline;
   width:100%;
-  flex-wrap:nowrap;              /* keep on one line; change to wrap if you prefer */
-  font-size:.9em;                /* tweak as you like */
+}
+
+.job-header{
+  display:grid;
+  grid-auto-flow:column;                 /* lay children left→right in a single row */
+  grid-auto-columns:minmax(0,1fr);       /* every column = 1fr, shrinkable */
+  column-gap:.5rem;
+  align-items:baseline;                  /* nicer text alignment */
+  width:100%;
 }
 
 .job-header > *{
-  white-space:nowrap;            /* don’t break inside an item */
-  min-width:0;                   /* allows ellipsis if you add it */
+  min-width:0;
+  white-space:normal;                    /* allow wrapping */
+  overflow-wrap:anywhere;
+  hyphens:auto;
 }
 
-/* optional: if you want equal space at the ends too, use this instead */
-/* .job-header{ justify-content:space-evenly; } */
+/* your h3 styles + span 2 columns */
+.job-header h3{
+  margin:0;
+  font-size:.9em;
+  grid-column:span 2;                    /* <-- take two columns */
+}
 
-.job-header h3 { 
-    margin: 0; 
-    font-size: 0.9em; 
+/* (optional) on narrow screens, stack and reset the span */
+@media (max-width:680px){
+  .job-header{ grid-auto-flow:row; }
+  .job-header h3{ grid-column:auto; }
 }
 .job-header .company {
-    font-style: italic; 
-    color: #555; 
+    font-style: italic;
+    color: #555;
 }
-.job-header .dates { 
-    color: #777; 
-    font-size: 0.7em; 
+.job-header .dates {
+    color: #777;
+    font-size: 0.7em;
 }
-.job-header .line { 
-    display: block; 
-    margin: 2px 0; 
+.job-header .line {
+    display: block;
+    margin: 2px 0;
 }
-.job-header br { 
-    line-height: 0.99; 
+.job-header br {
+    line-height: 0.99;
 }
-.job ul { 
-    padding-left: 20px; 
-    margin-top: 10px; 
+.job ul {
+    padding-left: 20px;
+    margin-top: 10px;
 }
-.job li { 
-    margin-bottom: 5px; 
-    line-height: 0.99; 
+.job li {
+    margin-bottom: 5px;
+    line-height: 0.99;
 }
-.preserve-newlines { 
-    white-space: pre-line; 
+.preserve-newlines {
+    white-space: pre-line;
 }
-.skills-grid { 
-    display: grid; 
-    grid-template-columns: 150px 1fr; 
-    gap: 8px; 
+.skills-grid {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 8px;
 }
-.skills-grid strong { 
-    color: #1a1a1a; 
+.skills-grid strong {
+    color: #1a1a1a;
 }
 
 /* Print-specific tweaks to match browser print */

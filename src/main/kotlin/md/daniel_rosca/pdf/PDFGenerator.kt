@@ -3,6 +3,7 @@ package md.daniel_rosca.pdf
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
+import com.microsoft.playwright.options.Margin
 import com.microsoft.playwright.options.Media
 import com.microsoft.playwright.options.WaitUntilState
 import java.io.File
@@ -38,7 +39,14 @@ fun generatePdf(htmlContent: String, outputPath: String) {
                     .setPath(Paths.get(outputPath))
                     .setPrintBackground(true)
                     .setFormat("A4")
-                    .setPreferCSSPageSize(true)
+                    .setPreferCSSPageSize(false)
+                    .setMargin(
+                        Margin()
+                            .setTop("0")
+                            .setLeft("0")
+                            .setRight("0")
+                            .setBottom("0")
+                    )
 
                 page.pdf(pdfOptions)
             }

@@ -53,7 +53,7 @@ data class PersonalInfo(
     val location: String,
     val phone: String,
     val email: String,
-    val links: List<Link>
+    val links: List<Link>?
 )
 
 data class Link(

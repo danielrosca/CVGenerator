@@ -3,9 +3,13 @@ personalInfo:
   location: "Berlin, Germany (Open to Remote B2B)"
   phone: "+49 123 4567890"
   email: "alex.miller.dev@email.com"
-  linkedin: "linkedin.com/in/alexmillerdev"
-  github: "github.com/alexmillerdev"
-  website: "alexmiller.dev"
+  links:
+    - name: "LinkedIn"
+      url: "https://linkedin.com/in/alexmillerdev"
+    - name: "GitHub"
+      url: "https://github.com/alexmillerdev"
+    - name: "Website"
+      url: "https://alexmiller.dev"
 
 professionalSummary: "Results-oriented Full-Stack Consultant with 8+ years of experience architecting and delivering robust enterprise solutions. Expert in transforming monolithic Java applications into modern, scalable systems using React, microservices, and microfrontends. I partner with businesses to enhance system performance, improve user experience, and accelerate development cycles by leveraging a deep expertise in technologies like Java, React, Kafka, Docker, and Elasticsearch."
 
@@ -47,21 +51,20 @@ education:
     startDate: "2013-10-01"
     graduationYear: "2017-07-01"
 
+languages:
+  - name: "English"
+    level: "Native"
+  - name: "German"
+    level: "Professional working proficiency"
+
 otherSections:
   - nameOfSection: "Leadership Roles"
     entries:
       - title: "President of Students' Union Council"
-        companyOrOrganization: "Some college"
+        companyOrOrganization: "Technical University of Munich"
         startDate: "2020-09-01"
         endDate: "2023-04-30"
         description:
-          "Some Presidential Stuff"
-      - title: "Vice-Headmaster"
-        startDate: "2022-01-01"
-        endDate: "2023-04-30"
-        description: "SomeDescription"
-  - nameOfSection: "SomeOtherSection"
-    entries:
-      - title: "Title"
-        startDate: "2020-01-01"
-        description: "someText"
+          "Led a 15-member student council representing 5,000+ students; organized
+          university-wide events and served as the primary liaison between the
+          student body and university administration."

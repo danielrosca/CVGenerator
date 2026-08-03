@@ -12,9 +12,9 @@ fun main() {
     println("CV Generator Started...")
 
     // --- 1. Configure Paths ---
-    val inputYamlPath = "src/main/resources/Google/UpdatedGoogleTargetL4.yaml"
-    val outputHtmlPath = "build/Google/L4_Daniel_Rosca_CV_ENG.html"
-    val outputPdfPath = "build/Google/L4_Daniel_Rosca_CV_ENG.pdf"
+    val inputYamlPath = "src/main/resources/ExampleCV.yaml"
+    val outputHtmlPath = "build/ExampleCV.html"
+    val outputPdfPath = "build/ExampleCV.pdf"
 
     // --- 2. Read and Parse YAML ---
     val cvData = try {
@@ -25,7 +25,7 @@ fun main() {
         println("Error reading or parsing YAML file: ${e.message}")
         return
     }
-    println("✅ Successfully parsed cv.yaml.")
+    println("✅ Successfully parsed $inputYamlPath")
 
     // --- 3. Generate HTML ---
     val htmlContent = generateHtml(cvData)
