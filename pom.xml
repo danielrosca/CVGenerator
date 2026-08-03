@@ -16,6 +16,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!-- kotlin-test-junit5 transitively pulls an older junit-jupiter-api (5.6.3) than the one
+         declared below (5.10.2); without this BOM import, junit-jupiter-params ends up loaded
+         against the older API at runtime and fails with NoSuchMethodError on @ParameterizedTest. -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.10.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- Kotlin Standard Library - THIS IS THE FIX for 'println' not found -->
         <dependency>
@@ -49,10 +64,25 @@
             <artifactId>playwright</artifactId>
             <version>1.56.0</version>
         </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit5</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <plugins>
             <!-- Kotlin Maven Plugin: Compiles .kt files -->
             <plugin>
@@ -67,7 +97,20 @@
                             <goal>compile</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
                 </executions>
+            </plugin>
+            <!-- Maven Surefire Plugin: needed explicitly for JUnit 5 test discovery -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
             </plugin>
             <!-- Maven JAR Plugin: Configures the main class to make the JAR runnable -->
             <plugin>
