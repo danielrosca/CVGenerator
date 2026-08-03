@@ -43,23 +43,6 @@
             <version>0.8.1</version>
         </dependency>
 
-        <!-- For converting the generated HTML to PDF -->
-        <dependency>
-            <groupId>org.xhtmlrenderer</groupId>
-            <artifactId>flying-saucer-pdf-openpdf</artifactId>
-            <version>9.1.22</version>
-        </dependency>
-        <!--<dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itext7-core</artifactId>
-            <version>9.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>html2pdf</artifactId>
-            <version>6.2.0</version>
-        </dependency>-->
-
         <!-- Playwright for browser-grade HTML rendering and PDF printing -->
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
@@ -95,10 +78,32 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.cvgenerator.MainKt</mainClass>
+                            <mainClass>md.daniel_rosca.MainKt</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <!-- Maven Shade Plugin: bundles all dependencies into a single runnable jar,
+                 so `mvn package` produces something `java -jar` can actually run standalone. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>md.daniel_rosca.MainKt</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
