@@ -82,6 +82,21 @@ class CvGeneratorControllerTest {
     }
 
     @Test
+    fun `POST generate with html=true returns 200 with the rendered HTML instead of a PDF`() {
+        val result =
+            mockMvc
+                .post("/generate?html=true") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = minimalCvDataJson
+                }.andReturn()
+
+        assertEquals(200, result.response.status)
+        assertEquals(MediaType.TEXT_HTML_VALUE, result.response.contentType)
+        val html = result.response.contentAsString
+        assertTrue(html.contains("Jane Doe"), "expected the returned HTML to contain the candidate's name")
+    }
+
+    @Test
     fun `POST generate with malformed JSON returns 400`() {
         val result =
             mockMvc

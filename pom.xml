@@ -68,6 +68,16 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Swagger UI / OpenAPI docs (CHORE-001). job-applier pins 2.6.0, but that version predates
+             Spring Framework 6.2.x (bundled by spring-boot-starter-parent 3.5.3 here) and throws
+             NoSuchMethodError on ControllerAdviceBean's constructor at the first request - confirmed
+             by testing, not assumed. 2.8.6 is the latest 2.8.x release and is built against 6.2.x. -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

@@ -1,5 +1,8 @@
 package md.daniel_rosca.web
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.tags.Tag
 import md.daniel_rosca.dto.CvData
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -8,11 +11,13 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 import java.nio.file.Files
 
 @RestController
+@Tag(name = "CV Generator", description = "Renders a CvData payload into a PDF or its intermediate HTML")
 class CvGeneratorController(private val cvGenerationService: CvGenerationService) {
     private val logger = LoggerFactory.getLogger(CvGeneratorController::class.java)
 
@@ -22,10 +27,23 @@ class CvGeneratorController(private val cvGenerationService: CvGenerationService
      * `HttpMessageNotReadableException`) during `@RequestBody` binding already returns 400 with
      * no code needed here.
      */
-    @PostMapping("/generate", produces = [MediaType.APPLICATION_PDF_VALUE])
+    @PostMapping("/generate", produces = [MediaType.APPLICATION_PDF_VALUE, MediaType.TEXT_HTML_VALUE])
+    @Operation(
+        summary = "Generate a CV",
+        description = "Returns a rendered PDF by default. Set html=true to return the intermediate HTML instead.",
+    )
     fun generate(
         @RequestBody cvData: CvData,
+        @Parameter(description = "Return the rendered HTML instead of the PDF")
+        @RequestParam(defaultValue = "false") html: Boolean,
     ): ResponseEntity<ByteArray> {
+        if (html) {
+            val htmlContent = cvGenerationService.renderHtml(cvData)
+            return ResponseEntity.ok()
+                .contentType(MediaType.TEXT_HTML)
+                .body(htmlContent.toByteArray(Charsets.UTF_8))
+        }
+
         val tempPdf = Files.createTempFile("cvgen-", ".pdf")
         try {
             cvGenerationService.generate(cvData, tempPdf.toString())
