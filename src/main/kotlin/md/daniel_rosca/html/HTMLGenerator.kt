@@ -3,11 +3,12 @@ package md.daniel_rosca.html
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import md.daniel_rosca.dto.CvData
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-import java.util.*
-import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 private fun Date.toLocalDate(): LocalDate = this.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
 
@@ -29,7 +30,10 @@ private data class Duration(val years: Long, val months: Long) {
     }
 }
 
-private fun calculateDuration(start: Date, end: Date): Duration {
+private fun calculateDuration(
+    start: Date,
+    end: Date,
+): Duration {
     val startDate = start.toLocalDate()
     val endDate = end.toLocalDate()
     var months = ChronoUnit.MONTHS.between(startDate, endDate)
@@ -219,7 +223,7 @@ body {
                 div("contact-info") {
                     span { +cv.personalInfo.location }
                     span { +" | " }
-                    span{ +cv.personalInfo.phone }
+                    span { +cv.personalInfo.phone }
                     span { +" | " }
                     a(href = "mailto:${cv.personalInfo.email}") { +cv.personalInfo.email }
                     if (cv.personalInfo.links != null) {
@@ -249,17 +253,21 @@ body {
                     span { +cv.technicalSkills.devopsAndCloud }
                     strong { +"Tools & Methods: " }
                     span { +cv.technicalSkills.toolsAndMethodologies }
+                    if (cv.technicalSkills.otherSkills.isNotEmpty()) {
+                        strong { +"Other: " }
+                        span { +cv.technicalSkills.otherSkills.joinToString(", ") }
+                    }
                 }
             }
 
             div("section") {
-                h2 { +"Professional Experience (${totalDuration})" }
+                h2 { +"Professional Experience ($totalDuration)" }
                 cv.experience.zip(jobDurations).forEach { (job, duration) ->
                     div("job") {
                         div("job-header") {
-                            h3 { +"${job.title} (${duration})" }
+                            h3 { +"${job.title} ($duration)" }
                             span("employment-type") {
-                                +job.employmentType.name.replace('_','-').lowercase()
+                                +job.employmentType.name.replace('_', '-').lowercase()
                                     .replaceFirstChar { it.uppercase() }
                             }
                             span("company") { +"at ${job.company}" }
@@ -313,7 +321,8 @@ body {
                                 }
                                 if (entry.startDate != null) {
                                     span("dates") {
-                                        +entry.startDate.formatToLongDate(); +" – "
+                                        +entry.startDate.formatToLongDate()
+                                        +" – "
                                         if (entry.endDate != null) +entry.endDate.formatToLongDate() else +"Present"
                                     }
                                 }
