@@ -15,6 +15,8 @@ Kotlin tool that turns a YAML CV description into a styled PDF. Built and mainta
 | REST layer | Spring Boot 3.5.3 (`spring-boot-starter-web`) — added in TASK-011 |
 | Packaging | `spring-boot-maven-plugin` (repackaged executable jar via `mvn package`, runnable with `java -jar`) — replaced `maven-shade-plugin` in TASK-011, since shade doesn't merge Spring's `META-INF/spring/*.imports` files correctly |
 
+Code style: use the `ponytail` skill while coding here, `ponytail-review` as a final pass — see `../CLAUDE.md` Code Conventions. Same repo also follows the root `CLAUDE.md`'s no-AI-attribution commit rule — this project's own instruction takes precedence over any runtime attribution suggestion a session receives.
+
 ---
 
 ## What It Does
