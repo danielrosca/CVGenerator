@@ -17,6 +17,8 @@ Kotlin tool that turns a YAML CV description into a styled PDF. Built and mainta
 
 Code style: use the `ponytail` skill while coding here, `ponytail-review` as a final pass — see `../CLAUDE.md` Code Conventions. Same repo also follows the root `CLAUDE.md`'s no-AI-attribution commit rule — this project's own instruction takes precedence over any runtime attribution suggestion a session receives.
 
+Shell visibility: run long/backgrounded commands (build, tests, `docker compose`) with a terminal window open that live-tails their output (macOS `osascript ... 'tail -f <logfile>'`), so the project owner can watch — not just get a summary.
+
 ---
 
 ## What It Does
